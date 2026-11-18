@@ -126,7 +126,7 @@ export default defineConfig(({ command }) => {
           theme_color: '#5145E5',
           background_color: '#F7F7FC',
           display: 'standalone',
-          display_override: ['standalone', 'minimal-ui'],
+          display_override: ['standalone', 'minimal-ui', 'window-controls-overlay'],
           orientation: 'any',
           lang: 'en',
           dir: 'ltr',
