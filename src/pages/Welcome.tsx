@@ -2,6 +2,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { ArrowRight, Check, FolderTree, Search, Timer, WifiOff } from 'lucide-react'
 import { Logo, NoteGlyph } from '@/components/Logo'
 import { PWAInstallButton } from '@/components/PWAInstallExperience'
+import { getLastAppPath } from '@/lib/appUrl'
 import { useAuth } from '@/state/AuthContext'
 
 const BENEFITS = [
@@ -16,8 +17,7 @@ export function Welcome() {
 
   // If already authenticated, redirect straight to user's notes / last visited page
   if (!initializing && user) {
-    const lastPath = typeof window !== 'undefined' ? sessionStorage.getItem('quicknote-last-path') : null
-    const target = lastPath && lastPath.startsWith('/app') ? lastPath : '/app'
+    const target = getLastAppPath() ?? '/app'
     return <Navigate to={target} replace />
   }
 

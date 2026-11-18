@@ -30,14 +30,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Build QuickNote PWA for GitHub Pages
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build:pages
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      - name: Verify Pages build output
+        run: |
+          REPO_BASE="/${{ github.event.repository.name }}/"
+          test -f dist/index.html
+          test -f dist/404.html
+          test -f dist/app/index.html
+          test -f dist/.nojekyll
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
+          grep -q "$REPO_BASE" dist/index.html
+          grep -q "$REPO_BASE" dist/manifest.webmanifest
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

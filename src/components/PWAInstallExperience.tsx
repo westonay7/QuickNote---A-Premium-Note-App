@@ -17,13 +17,17 @@ export function PWAInstallBanner() {
 
   useEffect(() => {
     // Check if dismissed recently (within 7 days)
-    const stored = localStorage.getItem(DISMISS_KEY)
-    if (stored) {
-      const until = Number.parseInt(stored, 10)
-      if (Date.now() < until) {
-        setDismissed(true)
-        return
+    try {
+      const stored = localStorage.getItem(DISMISS_KEY)
+      if (stored) {
+        const until = Number.parseInt(stored, 10)
+        if (Date.now() < until) {
+          setDismissed(true)
+          return
+        }
       }
+    } catch {
+      /* storage unavailable */
     }
     setDismissed(false)
   }, [])
@@ -39,7 +43,11 @@ export function PWAInstallBanner() {
 
   const handleDismiss = () => {
     // Dismiss for 7 days
-    localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 24 * 60 * 60 * 1000))
+    try {
+      localStorage.setItem(DISMISS_KEY, String(Date.now() + 7 * 24 * 60 * 60 * 1000))
+    } catch {
+      /* storage unavailable */
+    }
     setDismissed(true)
   }
 

@@ -12,7 +12,7 @@ import { AuthProvider, useAuth } from "@/state/AuthContext";
 import { DataProvider } from "@/state/DataContext";
 import { PrefsProvider } from "@/state/PrefsContext";
 import { ToastProvider } from "@/state/ToastContext";
-import { appUrl } from "@/lib/appUrl";
+import { appUrl, getLastAppPath } from "@/lib/appUrl";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { AppShell } from "@/components/AppShell";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -95,8 +95,8 @@ function PublicOnly({ children }: { children: ReactNode }) {
   const { user, initializing } = useAuth();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from;
-  const lastPath = typeof window !== 'undefined' ? sessionStorage.getItem('quicknote-last-path') : null;
-  const target = from ?? (lastPath && lastPath.startsWith('/app') ? lastPath : '/app');
+  const lastPath = getLastAppPath();
+  const target = from ?? lastPath ?? '/app';
   if (!initializing && user) return <Navigate to={target} replace />;
   return <>{children}</>;
 }
@@ -245,7 +245,19 @@ function AppRoutes() {
  * data router, which a declarative `<BrowserRouter>` cannot provide. The
  * existing `<Routes>` tree lives inside the splat route below.
  */
-const basePath = import.meta.env.BASE_URL.replace(/\/+$/, "")
+function resolveRouterBasename(): string | undefined {
+  const configured = import.meta.env.BASE_URL.replace(/\/+$/, "");
+  if (!configured) return undefined;
+  if (typeof window === "undefined") return configured;
+  const pathnameLower = window.location.pathname.toLowerCase();
+  const baseLower = configured.toLowerCase();
+  if (pathnameLower === baseLower || pathnameLower.startsWith(`${baseLower}/`)) {
+    return configured;
+  }
+  return undefined;
+}
+
+const routerBasename = resolveRouterBasename();
 
 const router = createBrowserRouter(
   [
@@ -255,9 +267,9 @@ const router = createBrowserRouter(
       errorElement: <RouteErrorScreen />,
     },
   ],
-  // GitHub Pages serves project sites under a subpath, so the router must be
-  // told about it; at the root (`BASE_URL === "/"`) no basename is needed.
-  basePath ? { basename: basePath } : undefined
+  // GitHub Pages serves project sites under `/QuickNote---A-Premium-Note-App/`,
+  // so the router strips that prefix; at the root (`BASE_URL === "/"`) no basename is needed.
+  routerBasename ? { basename: routerBasename } : undefined
 );
 
 export function App() {

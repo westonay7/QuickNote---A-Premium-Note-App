@@ -14,9 +14,9 @@ function normalizeBase(raw: string): string {
   return b
 }
 
-function resolveBasePath(command: 'serve' | 'build'): string {
-  if (command === 'serve') return '/'
+const GITHUB_PAGES_DEFAULT_BASE = '/QuickNote---A-Premium-Note-App/'
 
+function resolveBasePath(command: 'serve' | 'build'): string {
   const args = process.argv.slice(2)
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]
@@ -28,6 +28,8 @@ function resolveBasePath(command: 'serve' | 'build'): string {
     }
   }
 
+  if (command === 'serve') return '/'
+
   if (process.env.VITE_BASE_PATH) {
     return normalizeBase(process.env.VITE_BASE_PATH)
   }
@@ -37,6 +39,10 @@ function resolveBasePath(command: 'serve' | 'build'): string {
     if (repoName && !repoName.endsWith('.github.io')) {
       return normalizeBase(`/${repoName}/`)
     }
+  }
+
+  if (process.env.npm_lifecycle_event === 'build:pages') {
+    return GITHUB_PAGES_DEFAULT_BASE
   }
 
   return '/'
@@ -64,9 +70,9 @@ function stripCloudflareRedirectsPlugin(): Plugin {
 
 /**
  * Generates GitHub Pages SPA fallback files (`404.html`, `app/index.html`, and `.nojekyll`)
- * when building under a repository subpath such as `/QuickNote-Note-App/`.
+ * when building under a repository subpath such as `/QuickNote---A-Premium-Note-App/`.
  * This ensures deep links (`/app`, `/signin`, `/auth/callback`) load cleanly and
- * direct visits or PWABuilder scans of `/QuickNote-Note-App/app` receive HTTP 200.
+ * direct visits or PWABuilder scans of `/QuickNote---A-Premium-Note-App/app` receive HTTP 200.
  */
 function githubPagesSpaPlugin(base: string): Plugin {
   return {

@@ -4,6 +4,7 @@ import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button, Field, Input } from '@/components/ui'
 import { fieldErrors, signInSchema, type FieldErrors } from '@/lib/validation'
+import { getLastAppPath } from '@/lib/appUrl'
 import { friendlyError } from '@/lib/supabase'
 import { useAuth } from '@/state/AuthContext'
 import { useToast } from '@/state/ToastContext'
@@ -24,8 +25,8 @@ export function SignIn() {
   const [serverError, setServerError] = useState<string | null>(null)
 
   const fromState = (location.state as { from?: string } | null)?.from
-  const lastPath = typeof window !== 'undefined' ? sessionStorage.getItem('quicknote-last-path') : null
-  const next = fromState ?? params.get('next') ?? (lastPath && lastPath.startsWith('/app') ? lastPath : '/app')
+  const lastPath = getLastAppPath()
+  const next = fromState ?? params.get('next') ?? lastPath ?? '/app'
   const notice = params.get('notice')
 
   if (!initializing && isAuthenticated) return <Navigate to={next} replace />
