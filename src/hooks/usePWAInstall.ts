@@ -12,10 +12,11 @@ export function usePWAInstall() {
   const [isIOS, setIsIOS] = useState(false)
 
   useEffect(() => {
-    // Check if running in standalone display mode (already installed)
+    // Check if running in standalone display mode or inside an Android Trusted Web Activity (TWA)
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+      document.referrer.startsWith('android-app://')
     setIsInstalled(isStandalone)
 
     // Device detection

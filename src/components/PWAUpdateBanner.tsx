@@ -19,7 +19,7 @@ export function PWAUpdateBanner() {
     <aside
       role="alert"
       aria-live="polite"
-      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-slide-up rounded-2xl border border-brand-300 bg-white/95 p-4 shadow-pop backdrop-blur-md dark:border-brand-700 dark:bg-zinc-900/95"
+      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 right-4 z-50 mx-auto max-w-md animate-slide-up rounded-2xl border border-brand-300 bg-white/95 p-4 shadow-pop backdrop-blur-md dark:border-brand-700 dark:bg-zinc-900/95"
     >
       <div className="flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300">

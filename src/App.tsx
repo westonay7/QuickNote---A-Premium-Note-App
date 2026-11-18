@@ -12,6 +12,7 @@ import { AuthProvider, useAuth } from "@/state/AuthContext";
 import { DataProvider } from "@/state/DataContext";
 import { PrefsProvider } from "@/state/PrefsContext";
 import { ToastProvider } from "@/state/ToastContext";
+import { appUrl } from "@/lib/appUrl";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { AppShell } from "@/components/AppShell";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -113,7 +114,7 @@ function GlobalErrorFallback(error: Error, reset: () => void) {
       </div>
       <div className="flex gap-2">
         <Button onClick={reset}>Try again</Button>
-        <Button variant="ghost" onClick={() => window.location.assign("/app")}>
+        <Button variant="ghost" onClick={() => window.location.assign(appUrl("/app"))}>
           Reload app
         </Button>
       </div>
@@ -136,7 +137,7 @@ function RouteErrorScreen() {
         <p className="mt-2 font-mono text-xs text-zinc-400">{message}</p>
       </div>
       <div className="flex gap-2">
-        <Button onClick={() => window.location.assign("/app")}>Back to notes</Button>
+        <Button onClick={() => window.location.assign(appUrl("/app"))}>Back to notes</Button>
         <Button variant="ghost" onClick={() => window.location.reload()}>
           Reload app
         </Button>

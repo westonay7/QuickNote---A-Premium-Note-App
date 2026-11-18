@@ -11,7 +11,7 @@ import { useToast } from '@/state/ToastContext'
 import { usePWAUpdate } from '@/state/PWAUpdateContext'
 
 function titleFor(pathname: string): string {
-  if (pathname === '/app') return 'Dashboard'
+  if (pathname === '/app' || pathname === '/app/') return 'Dashboard'
   if (pathname.startsWith('/app/search')) return 'Search'
   if (pathname.startsWith('/app/notes/new')) return 'New Note'
   if (/\/app\/notes\/[^/]+/.test(pathname)) return 'Note'

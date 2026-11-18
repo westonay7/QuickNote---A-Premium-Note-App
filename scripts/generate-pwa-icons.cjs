@@ -68,8 +68,8 @@ function renderIcon(size, isMaskable) {
 
     if (isMaskable) {
       const grad = 1 - ny * 0.15;
-      const r = Math.round(79 * grad);
-      const g = Math.round(70 * grad);
+      const r = Math.round(81 * grad);
+      const g = Math.round(69 * grad);
       const b = Math.round(229 * grad);
 
       const px = nx;
@@ -129,8 +129,8 @@ function renderIcon(size, isMaskable) {
       if (alpha <= 0) return [0, 0, 0, 0];
 
       const grad = 1 - ny * 0.18;
-      const baseR = Math.round(79 * grad);
-      const baseG = Math.round(70 * grad);
+      const baseR = Math.round(81 * grad);
+      const baseG = Math.round(69 * grad);
       const baseB = Math.round(229 * grad);
 
       function lineAlpha(lx1, lx2, ly, thick) {
@@ -160,6 +160,7 @@ function renderIcon(size, isMaskable) {
 const pub = path.join(__dirname, '..', 'public');
 fs.writeFileSync(path.join(pub, 'pwa-192x192.png'), renderIcon(192, false));
 fs.writeFileSync(path.join(pub, 'pwa-512x512.png'), renderIcon(512, false));
+fs.writeFileSync(path.join(pub, 'pwa-maskable-192x192.png'), renderIcon(192, true));
 fs.writeFileSync(path.join(pub, 'pwa-maskable-512x512.png'), renderIcon(512, true));
 fs.writeFileSync(path.join(pub, 'apple-touch-icon.png'), renderIcon(180, false));
 console.log('Generated PWA icon set in public/');

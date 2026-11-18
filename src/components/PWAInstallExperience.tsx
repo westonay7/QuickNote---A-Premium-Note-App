@@ -56,7 +56,7 @@ export function PWAInstallBanner() {
     <>
       <aside
         aria-label="Install QuickNote application"
-        className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md animate-slide-up rounded-2xl border border-brand-200/80 bg-white/95 p-4 shadow-pop backdrop-blur-md dark:border-brand-800/80 dark:bg-zinc-900/95"
+        className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 right-4 z-50 mx-auto max-w-md animate-slide-up rounded-2xl border border-brand-200/80 bg-white/95 p-4 shadow-pop backdrop-blur-md dark:border-brand-800/80 dark:bg-zinc-900/95"
       >
         <div className="flex items-start gap-3">
           <div className="shrink-0 pt-0.5">

@@ -182,10 +182,18 @@ export function PWAUpdateProvider({ children }: { children: ReactNode }) {
         onNeedRefresh() {
           setUpdateAvailable(true)
         },
+        onNeedReload() {
+          if (isExplicitUpdateRef.current) {
+            reloadNow()
+          } else {
+            controllerChangedInBackgroundRef.current = true
+            setUpdateAvailable(true)
+          }
+        },
         onOfflineReady() {
           setOfflineReady(true)
         },
-        onRegistered(reg) {
+        onRegisteredSW(_swScriptUrl, reg) {
           if (reg) {
             registrationRef.current = reg
             if (reg.waiting) {
@@ -231,6 +239,7 @@ export function PWAUpdateProvider({ children }: { children: ReactNode }) {
     setIsUpdating(true)
 
     const runApply = async () => {
+      let hadWaitingWorker = false
       try {
         if (typeof caches !== 'undefined') {
           await caches.delete('quicknote-v1').catch(() => undefined)
@@ -238,11 +247,13 @@ export function PWAUpdateProvider({ children }: { children: ReactNode }) {
 
         let reg = registrationRef.current
         if (!reg && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-          reg = (await navigator.serviceWorker.getRegistration().catch(() => undefined)) ?? null
+          const scope = import.meta.env.BASE_URL || '/'
+          reg = (await navigator.serviceWorker.getRegistration(scope).catch(() => undefined)) ?? null
           if (reg) registrationRef.current = reg
         }
 
         if (reg?.waiting) {
+          hadWaitingWorker = true
           reg.waiting.postMessage({ type: 'SKIP_WAITING' })
         }
 
@@ -250,10 +261,10 @@ export function PWAUpdateProvider({ children }: { children: ReactNode }) {
           await updateSWRef.current(true).catch(() => undefined)
         }
       } finally {
-        // Guaranteed reload fallback in case controllerchange already fired or is skipped
+        // Reload immediately when the updated SW is already active; otherwise allow brief time for SKIP_WAITING
         window.setTimeout(() => {
           reloadNow()
-        }, 1200)
+        }, hadWaitingWorker ? 1200 : 250)
       }
     }
 
@@ -271,7 +282,8 @@ export function PWAUpdateProvider({ children }: { children: ReactNode }) {
         // If an update is already waiting or activated in the background, apply immediately on manual check
         let reg = registrationRef.current
         if (!reg && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-          reg = (await navigator.serviceWorker.getRegistration().catch(() => undefined)) ?? null
+          const scope = import.meta.env.BASE_URL || '/'
+          reg = (await navigator.serviceWorker.getRegistration(scope).catch(() => undefined)) ?? null
           if (reg) registrationRef.current = reg
         }
 
